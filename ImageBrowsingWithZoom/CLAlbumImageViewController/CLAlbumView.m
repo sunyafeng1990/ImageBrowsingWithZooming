@@ -2,14 +2,14 @@
 //  CLAlbumView.m
 //  CLAlbumnCollectionPractice
 //
-//  Created by 陈璐 on 16/6/11.
-//  Copyright © 2016年 王路. All rights reserved.
+//  Created by lemo on 2018/5/17.
+//  Copyright © 2018年 孙亚锋. All rights reserved.
 //
 
 #import "CLAlbumView.h"
-#import "ZZPersonalImageAlubumCollectionViewCell.h"
+#import "CLPersonalImageAlubumCollectionViewCell.h"
 
-static NSString *const personalImageAlubumCollectionViewCell = @"ZZPersonalImageAlubumCollectionViewCell";
+static NSString *const personalImageAlubumCollectionViewCell = @"CLPersonalImageAlubumCollectionViewCell";
 static const NSInteger maxRepeatCount = 100;
 
 @interface CLAlbumView ()<UICollectionViewDataSource, UICollectionViewDelegate>
@@ -87,12 +87,10 @@ static const NSInteger maxRepeatCount = 100;
 {
     self = [super initWithFrame:frame];
     if (self) {
-        //  1.默认设置
-        [self defaultConfigure];
         //  创建子视图
         [self setupSubViews];
         //  2.注册cell
-        [_mainCollectionView registerClass:[ZZPersonalImageAlubumCollectionViewCell class] forCellWithReuseIdentifier:personalImageAlubumCollectionViewCell];
+        [_mainCollectionView registerClass:[CLPersonalImageAlubumCollectionViewCell class] forCellWithReuseIdentifier:personalImageAlubumCollectionViewCell];
     }
     return self;
 }
@@ -108,11 +106,6 @@ static const NSInteger maxRepeatCount = 100;
 
 
 #pragma mark - 私有方法
-
-- (void)defaultConfigure{
-    
-}
-
 - (void)setupSubViews{
     // 当前位置展示
     _indexLabel                 = [[UILabel alloc]init];
@@ -158,7 +151,7 @@ static const NSInteger maxRepeatCount = 100;
 
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
-    ZZPersonalImageAlubumCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:personalImageAlubumCollectionViewCell forIndexPath:indexPath];
+    CLPersonalImageAlubumCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:personalImageAlubumCollectionViewCell forIndexPath:indexPath];
     if (_imageNames) {
         cell.imageName  = _imageNames[indexPath.row];
     }else if (_images){

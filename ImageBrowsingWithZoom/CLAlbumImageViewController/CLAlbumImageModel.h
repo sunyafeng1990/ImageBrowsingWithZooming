@@ -2,8 +2,8 @@
 //  CLAlbumImageModel.h
 //  CLAlbumnCollectionPractice
 //
-//  Created by 王路 on 16/5/31.
-//  Copyright © 2016年 王路. All rights reserved.
+//  Created by lemo on 2018/5/17.
+//  Copyright © 2018年 孙亚锋. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

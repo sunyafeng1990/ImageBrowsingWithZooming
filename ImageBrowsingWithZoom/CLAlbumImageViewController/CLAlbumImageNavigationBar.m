@@ -2,23 +2,19 @@
 //  CLAlbumImageNavigationBar.m
 //  CLAlbumnCollectionPractice
 //
-//  Created by 王路 on 16/6/2.
-//  Copyright © 2016年 王路. All rights reserved.
+//  Created by lemo on 2018/5/17.
+//  Copyright © 2018年 孙亚锋. All rights reserved.
 //
 
 #import "CLAlbumImageNavigationBar.h"
 #import "CLAlbumImageNavigationBarBackButton.h"
 
 @interface CLAlbumImageNavigationBar ()
-
 /** 返回按钮 */
 @property(nonatomic, strong)CLAlbumImageNavigationBarBackButton *backButton;
 
 /** 图片位置展示的label */
 @property(nonatomic, strong)UILabel *indexLabel;
-
-///** 确定按钮 */
-//@property(nonatomic, strong)UIButton *doneButton;
 
 @end
 
@@ -132,7 +128,7 @@
 #pragma mark 公有方法
 +(CGFloat)fixedHeight{
   
-  if (Is_Iphone_X) {
+  if (IS_IPHONE_X) {
     return 83;
   }
   return 64;

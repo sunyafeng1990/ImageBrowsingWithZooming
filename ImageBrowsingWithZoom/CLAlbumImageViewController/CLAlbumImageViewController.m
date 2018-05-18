@@ -2,18 +2,16 @@
 //  CLAlbumImageViewController.m
 //  CLAlbumnCollectionPractice
 //
-//  Created by 王路 on 16/5/31.
-//  Copyright © 2016年 王路. All rights reserved.
+//  Created by lemo on 2018/5/17.
+//  Copyright © 2018年 孙亚锋. All rights reserved.
 //
+
 
 #import "CLAlbumImageViewController.h"
 #import "CLAlbumImageModel.h"
 #import "CLAlbumImageCollectionViewCell.h"
 #import "CLAlbumImageNavigationBar.h"
-#import "NavigationViewController.h"
-#import "MakePhotoAlbumViewController.h"
-#import "UIImageView+Property.h"
-#import "SYFProgressView.h"
+
 static NSString *const cellReuse = @"CLAlbumImageCollectionViewCell";
 static const CGFloat maxRepeatCount = 1000;
 static const NSTimeInterval animationTime = 0.5;
@@ -35,26 +33,14 @@ static const NSTimeInterval animationTime = 0.5;
 /** 数据源 */
 @property(nonatomic, strong)NSMutableArray<CLAlbumImageModel *> *models;
 
-
-
 /** 状态栏状态 */
 @property(nonatomic, assign)BOOL isBarHidden;
 
-/** 点击下载图片需要显示的进度View*/
-@property(nonatomic,strong)SYFProgressView *bgView;
+
 @end
 
 @implementation CLAlbumImageViewController
-- (SYFProgressView *)bgView
-{
-    if (!_bgView) {
-        _bgView = [[SYFProgressView alloc] init];
-        _bgView.center = self.view.center;
-        _bgView.bounds = CGRectMake(0,0,210,200);
-        
-    }
-    return _bgView;
-}
+
 #pragma mark setter
 - (void)setIsInfinity:(BOOL)isInfinity{
     //  默认是无限循环的，如果不无限循环，则collectionView只有一个section
@@ -241,7 +227,6 @@ static const NSTimeInterval animationTime = 0.5;
             CGRect frame = _albumImageBar.frame;
 
             frame.origin.y = -([CLAlbumImageNavigationBar fixedHeight] + 20);
-               NSLog(@"origin.y---->%f",frame.origin.y);
             _albumImageBar.frame  = frame;
         }];
         //  隐藏titleTextView
@@ -261,7 +246,6 @@ static const NSTimeInterval animationTime = 0.5;
             CGRect frame = _albumImageBar.frame;
 
               frame.origin.y = 0;
-           NSLog(@"origin.y===>%f",frame.origin.y);
             _albumImageBar.frame = frame;
         }];
         //  还原titleTextView的初始位置
@@ -278,7 +262,6 @@ static const NSTimeInterval animationTime = 0.5;
         });
     }
 }
-
 //  轻拍手势
 - (void)tapImageView:(UITapGestureRecognizer *)tap
 {
@@ -293,11 +276,9 @@ static const NSTimeInterval animationTime = 0.5;
     CLAlbumImageCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:cellReuse forIndexPath:indexPath];
     CLAlbumImageModel *model = _models[indexPath.row];
     cell.model = model;
-    cell.downloadBtn.tag = indexPath.row;
-    cell.scrollView.tag = indexPath.row;
+    cell.scrollView.tag  = indexPath.row;
     cell.CLImageView.tag = indexPath.row;
-    [cell.downloadBtn addTarget:self action:@selector(downloadedImage:) forControlEvents:UIControlEventTouchUpInside];
-    [cell.makeBtn addTarget:self action:@selector(makePhotoClock) forControlEvents:UIControlEventTouchUpInside];
+
     self.currentIndexPath = indexPath;
     return cell;
 }
@@ -315,13 +296,12 @@ static const NSTimeInterval animationTime = 0.5;
     _currentIndex = currentImageIndex;
     _albumImageBar.currentIndex = _currentIndex;
 }
-/* 解开注释导航栏不会因此 重复走2次
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView{
     //  开始滑动就隐藏状态栏
     if (!_isBarHidden && _isAutoHiddenBar) {
         self.isBarHidden  = !_isBarHidden;
     }
-}*/
+}
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
     //  无线滚动时，如果滚动的位置超过了2/3，就自动返回中间位置
     if (scrollView.contentOffset.x > (maxRepeatCount * 2 / 3.0) * _CLCollectionView.frame.size.width * _models.count) {
@@ -330,10 +310,8 @@ static const NSTimeInterval animationTime = 0.5;
           
         }
     }
-  
+#pragma mark  - -将不是当前imageview的缩放全部还原 (这个方法有些冗余，后期可以改进)
   int autualIndex = scrollView.contentOffset.x  / _CLCollectionView.bounds.size.width;
- 
-    //将不是当前imageview的缩放全部还原 (这个方法有些冗余，后期可以改进)
   for (UIView *view in scrollView.subviews) {
     if ([view isKindOfClass:[CLAlbumImageCollectionViewCell class]]) {
       CLAlbumImageCollectionViewCell * cell = (CLAlbumImageCollectionViewCell *)view;
@@ -606,8 +584,8 @@ static const NSTimeInterval animationTime = 0.5;
             //  再刷新相册中的数据源
             NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:self.currentIndexPath.section];
             [controller.CLCollectionView reloadSections:indexSet];
-            //            //  再将删除的哪一个图片传出去，让外面的相册也刷新数据源
-            //            delImageViewBlock(index);
+            // 再将删除的哪一个图片传出去，让外面的相册也刷新数据源
+            //   delImageViewBlock(index);
             //  删除设置动画用的imageView数组中对应的imageView
             [imageViewArray removeObjectAtIndex:index];
             if (delImageViewBlock) {
@@ -625,7 +603,6 @@ static const NSTimeInterval animationTime = 0.5;
         if (backImageViewBlock) {
             backImageViewBlock(index);
         }
-        //        NSLog(@"Method : %s, Line : %d, imageViewArray.count = %ld, index = %ld", __FUNCTION__, __LINE__, imageViewArray.count, index);
         NSLog(@"Method : %s, Line : %d, imageViewArray = %@", __FUNCTION__, __LINE__, imageViewArray);
         //  获取到返回时的正在显示的imageView
         imageView = imageViewArray[index];
@@ -859,91 +836,7 @@ static const NSTimeInterval animationTime = 0.5;
         }];
     };
 }
-
-#pragma mark - -点击 制作相册
-- (void)makePhotoClock
-{
-  
-    if (self.makePhotoBlock) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            NSLog(@"制作相册");
-            self.makePhotoBlock();
-        });
-    }
-    [self dismissViewControllerAnimated:NO completion:nil];
-    
-  
-    
-  
-    
-}
-#pragma mark - -点击 下载图片
-- (void)downloadedImage:(UIButton *)btn
-{
-//  NSLog(@"点击下载 tag %ld",btn.tag);
-  NSLog(@"点击下载~~~~~");
-// 获取相册权限
-    ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
-    if (status == ALAuthorizationStatusRestricted || status == ALAuthorizationStatusDenied) {
-        UIAlertController *alertVc = [UIAlertController alertControllerWithTitle:nil message:@"请在iPhone的“设置-隐私-照片”选项中，允许渡渡访问你的照片" preferredStyle:UIAlertControllerStyleAlert];
-        [alertVc addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
-        [self presentViewController:alertVc animated:YES completion:nil];
-    }else{
-        WS(weakSelf);
-       
-        UIWindow *window =  [UIApplication sharedApplication].delegate.window;
-        [window addSubview:self.bgView];
-         CLAlbumImageModel *model = _models[btn.tag];
-//        NSLog(@"%ld-----%@",btn.tag,model.imageURL);
-        SDWebImageDownloader *loader= [[SDWebImageDownloader alloc]init];
-        [loader downloadImageWithURL:[NSURL URLWithString:model.imageURL] options:SDWebImageDownloaderHighPriority progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-            weakSelf.bgView.progressView.progressValue = (CGFloat)receivedSize/expectedSize;
-        } completed:^(UIImage *image, NSData *data, NSError *error, BOOL finished) {
-            if (finished) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    weakSelf.bgView.progressView.progressValue = 0;
-                    [weakSelf.bgView removeFromSuperview];
-                    [weakSelf loadImageFinished:image];
-                    if (weakSelf.block) {
-                        weakSelf.block(btn.tag);
-                    }
-                });
-                
-            }
-            
-            
-        }];
-    
-        
-//        if (self.block) {
-//            self.block(btn.tag);
-//        }
-//        [self dismissViewControllerAnimated:NO completion:^{
-//
-//        }];
-    }
-  
-}
-- (void)loadImageFinished:(UIImage *)image
-{
-    __block ALAssetsLibrary *lib = [[ALAssetsLibrary alloc]init];
-    [lib writeImageToSavedPhotosAlbum:image.CGImage metadata:nil completionBlock:^(NSURL *assetURL, NSError *error) {
-        if (!error) {
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                UIAlertView *alertView=[[UIAlertView alloc]initWithTitle:@"提示" message:@"保存图片成功,打开照片程序即可查看" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
-                [alertView show];
-                lib = nil;
-            });
- 
-        }
-    }];
-}
-
-
-
-
-
+/*
   //传递图片字符
 - (void)syf_showCLAlbumWithTarget:(__kindof UIViewController *)target title:(NSString *)title originalIndex:(NSInteger)originalIndex isInfinity:(BOOL)isInfinity imageUrls:(NSArray<NSString *> *)imageUrls WithDelImageViewAction:(void (^)(NSInteger))delImageViewBlock WithBackImageViewAction:(void (^)(NSInteger))backImageViewBlock{
   
@@ -984,6 +877,7 @@ static const NSTimeInterval animationTime = 0.5;
     [controller dismissViewControllerAnimated:YES completion:nil];
   };
 }
+ */
 
 
 

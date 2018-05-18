@@ -2,8 +2,8 @@
 //  CLAlbumImageCollectionViewCell.m
 //  CLAlbumnCollectionPractice
 //
-//  Created by 王路 on 16/5/31.
-//  Copyright © 2016年 王路. All rights reserved.
+//  Created by lemo on 2018/5/17.
+//  Copyright © 2018年 孙亚锋. All rights reserved.
 //
 
 #import "CLAlbumImageCollectionViewCell.h"
@@ -11,7 +11,12 @@
 #import "UIImageView+WebCache.h"
   //是否支持横屏
 #define shouldSupportLandscape NO
-#define kIsFullWidthForLandScape NO //是否在横屏的时候直接满宽度，而不是满高度，一般是在有长图需求的时候设置为YES
+//是否在横屏的时候直接满宽度，而不是满高度，一般是在有长图需求的时候设置为YES
+#define kIsFullWidthForLandScape NO
+//图片缩放的比例
+#define MaxSCale 2.0f //最大缩放比例
+#define MinScale 0.5f //最小缩放比例
+
 //  titleLabel的高度
 static const CGFloat titleLabelH = 70;
 
@@ -63,32 +68,18 @@ static const CGFloat titleLabelH = 70;
     }else if (_model.imageURL){
         [_CLImageView setShowActivityIndicatorView:YES];
         
-//        if ([kUserDefaults boolForKey:@"FormPhotosVC"] == YES) {
-//                //hongyang_def_wenzipeitu_2
-//            [_CLImageView sd_setImageWithURL:[NSURL URLWithString:[OSSImageKit scale_w:KScreenWidth url:_model.imageURL]] placeholderImage:[UIImage imageNamed:@""] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-//
-//                [weakSelf adjustFrames:image];
-//
-//            }];
-//
-//        }else{
-            _CLImageView.frame = CGRectMake(0, 0, _CLImageView.frame.size.width, _CLImageView.frame.size.height);
-            _scrollView.contentSize = self.CLImageView.frame.size;
-            _CLImageView.center = [self centerOfScrollViewContent:self.scrollView];
-            _scrollView.contentOffset = CGPointZero;
-            [_CLImageView sd_setImageWithURL:[NSURL URLWithString:_model.imageURL]placeholderImage:[UIImage imageNamed:@""] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-                
-                [weakSelf adjustFrames:image];
-                
-            }];
+        _CLImageView.frame = CGRectMake(0, 0, _CLImageView.frame.size.width, _CLImageView.frame.size.height);
+        _scrollView.contentSize = self.CLImageView.frame.size;
+        _CLImageView.center = [self centerOfScrollViewContent:self.scrollView];
+        _scrollView.contentOffset = CGPointZero;
+        [_CLImageView sd_setImageWithURL:[NSURL URLWithString:_model.imageURL]placeholderImage:[UIImage imageNamed:@"背景图.jpg"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             
-//        }
-        
+            [weakSelf adjustFrames:image];
+            
+        }];
     }else if (_model.image){
         _CLImageView.image = _model.image;
     }
-  
-  
 }
 #pragma mark - 重写系统的方法
 - (instancetype)initWithFrame:(CGRect)frame
@@ -98,13 +89,13 @@ static const CGFloat titleLabelH = 70;
         self.totalScale = 1.0;
 //        创建子视图
         [self setupSubViews];
-    
     }
     return self;
 }
 - (UIScrollView *)scrollView
 {
     if (!_scrollView) {
+   
         _scrollView = [[UIScrollView alloc] init];
         _scrollView.frame = CGRectMake(0, 0, KScreenWidth , KScreenHeight);
         [_scrollView addSubview:self.CLImageView];
@@ -149,55 +140,20 @@ static const CGFloat titleLabelH = 70;
             break;
     }
     _CLTitleLabel.frame = CGRectMake(labelX, labelY, labelW, labelH);
-  
-  
 }
-
-
 #pragma mark - 私有方法
 //创建子视图
 - (void)setupSubViews{
 
   [self.contentView addSubview:self.scrollView];
   //长按保存图片手势
-    if ([kUserDefaults boolForKey:@"FormPhotosVC"] == NO) {
-      // 只要不在往期放生列表进去  才有长按保存手势
       UILongPressGestureRecognizer *logPressGesture =  [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longTapAction:)];
   
       [_CLImageView addGestureRecognizer:logPressGesture];
    
-    }
-
 //    TitleLabel
     _CLTitleLabel = [[UILabel alloc]init];
     [_CLImageView addSubview:_CLTitleLabel];
-    
-  if ([kUserDefaults boolForKey:@"FormPhotosVC"] == YES) {
-      CGFloat btnWidth;
-      CGFloat btnHeight;
-      if (IS_IPHONE_4 || IS_IPHONE_5) {
-           btnWidth  = 154 * WScreenWidth;
-           btnHeight = 31  * WScreenWidth;
-      }else{
-           btnWidth  = 154;
-           btnHeight = 31;
-      }
-    
-      CGFloat spacing = (KScreenWidth - 2*btnWidth)/3.0;
-      UIButton *makeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-      makeBtn.frame = CGRectMake(spacing,self.contentView.frame.size.height -btnHeight - 80,btnWidth,btnHeight);
-      [makeBtn setBackgroundImage:[UIImage imageNamed:@"回顾制作相册"] forState:UIControlStateNormal];
-      [self.contentView addSubview:makeBtn];
-      [self.contentView bringSubviewToFront:makeBtn];
-      self.makeBtn = makeBtn;
-      UIButton *downloadBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-      downloadBtn.frame = CGRectMake(btnWidth + 2*spacing,self.contentView.frame.size.height -btnHeight - 80,btnWidth,btnHeight);
-      [downloadBtn setBackgroundImage:[UIImage imageNamed:@"回顾下载图片"] forState:UIControlStateNormal];
-      [self.contentView addSubview:downloadBtn];
-      [self.contentView bringSubviewToFront:downloadBtn];
-      self.downloadBtn = downloadBtn;
-     
-  }
 }
 
 #pragma mark 长按保存图片到本地
@@ -228,15 +184,14 @@ static const CGFloat titleLabelH = 70;
   //保存图片到相册的回调方法
 - (void)image:(UIImage *)image finishedSaveWithError:(NSError*)error contextInfo:(void*)contextInfo{
   if (error) {
-    UIAlertView *alertView=[[UIAlertView alloc]initWithTitle:@"无法保存" message:@"请在iPhone的“设置-隐私-照片”选项中，允许渡渡访问你的照片" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"好", nil];
+    UIAlertView *alertView=[[UIAlertView alloc]initWithTitle:@"无法保存" message:@"请在iPhone的“设置-隐私-照片”选项中，允许访问你的照片" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"好", nil];
     [alertView show];
   }else{
-    UIAlertView *alertView=[[UIAlertView alloc]initWithTitle:@"提示" message:@"保存成功" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
-    [alertView show];
+    UIAlertView *alert=[[UIAlertView alloc]initWithTitle:@"提示" message:@"保存成功" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
+    [alert show];
     
   }
 }
-
 #pragma mark - -控制图片显示
 - (void)adjustFrames:(UIImage *)image
 {

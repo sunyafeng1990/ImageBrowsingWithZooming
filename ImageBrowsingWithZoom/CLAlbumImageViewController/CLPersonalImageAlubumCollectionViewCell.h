@@ -9,5 +9,12 @@
 #import <UIKit/UIKit.h>
 
 @interface CLPersonalImageAlubumCollectionViewCell : UICollectionViewCell
+/** 图片的URL */
+@property(nonatomic, copy)NSString *imageURL;
 
+/** 图片名 */
+@property(nonatomic, copy)NSString *imageName;
+
+/** 图片Image */
+@property(nonatomic, strong)UIImage *image;
 @end

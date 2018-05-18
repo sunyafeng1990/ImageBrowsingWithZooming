@@ -2,8 +2,8 @@
 //  CLAlbumImageViewController.h
 //  CLAlbumnCollectionPractice
 //
-//  Created by 王路 on 16/5/31.
-//  Copyright © 2016年 王路. All rights reserved.
+//  Created by lemo on 2018/5/17.
+//  Copyright © 2018年 孙亚锋. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -97,7 +97,8 @@ typedef void(^MakePhotoBlock)(void);
 
 + (void)showCLAlbumWithTarget:(__kindof UIViewController *)target title:(NSString *)title originalIndex:(NSInteger)originalIndex isInfinity:(BOOL)isInfinity images:(NSArray<NSString *> *)images deleteBlock:(void (^) (NSInteger index))deleteBlock backBlock:(void (^)(NSInteger index))backBlock reloadBlock:(void (^)())reloadBlock;
 
+/*
 - (void)syf_showCLAlbumWithTarget:(__kindof UIViewController *)target title:(NSString *)title originalIndex:(NSInteger)originalIndex isInfinity:(BOOL)isInfinity imageUrls:(NSArray<NSString *> *)imageUrls WithDelImageViewAction:(void (^)(NSInteger))delImageViewBlock WithBackImageViewAction:(void (^)(NSInteger))backImageViewBlock;
-
+*/
 
 @end
